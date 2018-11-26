@@ -73,6 +73,14 @@
 					                <div class="mui-media-body">{{items.dissname}}</div></a></li>
 					    </ul>-->
 					</div>
+					<div class="wrapper">
+						<ul class="mui-table-view mui-grid-view">
+					        <li class="mui-table-view-cell mui-media mui-col-xs-6" v-for="items in shoubomv" @click="showMVinfo(items)">
+					            <a href="#">
+					                <img class="mui-media-object" v-bind:src="items.picurl">
+					                <div class="mui-media-body">{{items.mvtitle}} {{items.singer_name}} {{items.pub_date}}</div></a></li>
+					    </ul>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -83,6 +91,7 @@
 				var ajaxHelper = new AjaxHelper();
 				var api = new Api();
 				var webview_detail = null; //详情页webview
+				var mv_detail =null;
 				var titleNView = { //详情页原生导航配置
 					backgroundColor: '#f7f7f7', //导航栏背景色
 					titleText: '', //导航栏标题
@@ -127,6 +136,22 @@
 						},
 						showSliderInfo: function(artId){
 							alert(artId);
+						},
+						showMVinfo: function(items) {
+							//触发子窗口变更新闻详情
+							mui.fire(mv_detail, 'get_MVdetail', {
+								vid: items.vid,
+								mvtitle: items.mvtitle
+							});
+			
+							//更改详情页原生导航条信息
+							titleNView.titleText = items.mvtitle;
+							mv_detail.setStyle({
+								"titleNView": titleNView
+							});
+							setTimeout(function() {
+								mv_detail.show("slide-in-right", 300);
+							}, 150);
 						},
 						getListData: function() {
 							
@@ -212,6 +237,17 @@
 					webview_detail = mui.preload({
 						url: 'html/cdList.html',
 						id: 'cd_detail',
+						styles: {
+							"render": "always",
+							"popGesture": "hide",
+							"bounce": "vertical",
+							"bounceBackground": "#efeff4",
+							"titleNView": titleNView
+						}
+					});
+					mv_detail = mui.preload({
+						url: 'html/mvDetail.html',
+						id: 'mv_detail',
 						styles: {
 							"render": "always",
 							"popGesture": "hide",

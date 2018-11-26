@@ -388,7 +388,8 @@
 				"refer": [
 					"html/tab-webview-subpage-contact.html",
 					"html/new-webview.html",
-					"html/cdList.html"
+					"html/cdList.html",
+					"html/mvDetail.html"
 				],
 				"priority": 0
 			},

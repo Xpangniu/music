@@ -25,7 +25,15 @@
 			
 			<div class="kr-article-content">
 				<ul class="mui-table-view">
-				    <li class="mui-table-view-cell" v-for="item in cdList" @click="play(item)">{{item.name}}</li>
+					<li class="mui-table-view-cell mui-media" v-for="item in cdList">
+						<a href="javascript:;">
+							<img class="mui-media-object mui-pull-right" src="../images/icon-...black.png" @click="showMenu(item)">
+							<div class="mui-media-body" @click="play(item)">
+								{{item.name}}
+								<p class='mui-ellipsis'>{{item.singer[0].name}}</p>
+							</div>
+						</a>
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -51,6 +59,9 @@
 					},
 					play: function(item) {
 						alert(item.mid);
+					},
+					showMenu: function(item) {
+						alert(item.name);
 					}
 				}
 			});

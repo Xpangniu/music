@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>new webview</title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/vue.min.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+	</head>
+	<body>
+		<div class="mui-content">
+			<div class="kr-article-content">
+				<!--文章详细内容-->
+				<div id="kr-article-article" class="kr-article-article" v-html="content"></div>
+			</div>
+		</div>
+		
+		<script>
+			function getDefaultData() {
+				return {
+					vid: '',
+					mvtitle: '',
+					content: ''
+				}
+			}
+
+			var vm = new Vue({
+				el: '#cdlist',
+				data: getDefaultData(),
+				methods: {
+					resetData: function() {//重置数据
+						Object.assign(this.$data, getDefaultData());
+					}
+				}
+			});
+			//监听自定义事件，获取新闻详情
+			document.addEventListener('get_MVdetail', function(event) {
+				var dissid = event.detail.vid;
+				if(!dissid) {
+					return;
+				}
+				
+				//前页传入的数据，直接渲染，无需等待ajax请求详情后
+				vm.vid = event.detail.vid;
+				vm.mvtitle = event.detail.mvtitle;
+				
+				//向服务端请求文章详情内容
+				mui.ajax('https://y.qq.com/portal/mv/v/' + dissid + '.html', {
+					type:'GET',
+					dataType: 'json', //服务器返回json格式数据
+					timeout: 15000, //15秒超时
+					success: function(rsp) {
+						vm.content = rsp.content;
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast('获取文章内容失败');
+						//TODO 此处可以向服务端告警
+					}
+				});
+			});
+
+			//重写返回逻辑
+			mui.back = function() {
+				plus.webview.currentWebview().hide("auto", 300);
+			}
+			
+			//窗口隐藏时，重置页面数据
+			mui.plusReady(function () {
+				var self = plus.webview.currentWebview();
+				self.addEventListener("hide",function (e) {
+					window.scrollTo(0, 0);
+					vm.resetData();
+				},false);
+			})
+		</script>
+	</body>
+</html>
