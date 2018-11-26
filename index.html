@@ -32,17 +32,12 @@
 				<div id="app">
 					<div id="slider" class="mui-slider" >
 						<div class="mui-slider-group mui-slider-loop">
-							<div class="mui-slider-item mui-slider-item-duplicate">
+							<div class="mui-slider-item mui-slider-item-duplicate" @click="showArticleinfo(focus[focus.length-1].id)">
 								<a href="#">
-									<img src="http://y.gtimg.cn/music/common/upload/MUSIC_FOCUS/923853.jpg">
+									<img v-bind:src="focus[focus.length-1].pic">
 								</a>
 							</div>
-							<!--<div class="mui-slider-item mui-slider-item-duplicate" v-for="(items,index) in focus" @click="showArticleinfo(items.id)" v-if="focus!== undefined && index==focus.length-1">
-								<a href="#">
-									<img v-bind:src="items.pic">
-								</a>
-							</div>-->
-							<!-- 第一张 -->
+							
 							<div class="mui-slider-item" v-for="items in focus" @click="showArticleinfo(items.id)">
 								<a href="#">
 									<img v-bind:src="items.pic">
@@ -50,23 +45,23 @@
 							</div>
 							
 							<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
-							<div class="mui-slider-item mui-slider-item-duplicate" v-for="(items,index) in focus" @click="showArticleinfo(items.id)" v-if="index==0">
+							<div class="mui-slider-item mui-slider-item-duplicate" @click="showArticleinfo(focus[0].id)">
 								<a href="#">
-									<img v-bind:src="items.pic">
+									<img v-bind:src="focus[0].pic">
 								</a>
 							</div>
 						</div>
 						<div class="mui-slider-indicator">
 							<div class="mui-indicator mui-active"></div>
-							<div class="mui-indicator" v-for="n in 4"></div>
+							<div class="mui-indicator" v-for="items in focus.length-1"></div>
 						</div>
 					</div>
 					<div class="wrapper">
-						<div class="mui-card" v-for="items in hotdiss" @click="showArticleinfo(items.dissid)">
+						<div class="mui-card" v-for="items in hotdiss" @click="showArticleinfo(items)">
 							<div class="mui-card-header mui-card-media" :style="'height:40vw;background-image:url('+items.imgurl+')'"></div>
 							<div class="mui-card-content">
 								<div class="mui-card-content-inner">
-									<p>Posted on January 18, 2016</p>
+									<p>{{items.author}}</p>
 									<p style="color: #333;">{{items.dissname}}</p>
 								</div>
 							</div>
@@ -87,13 +82,22 @@
 			(function() {
 				var ajaxHelper = new AjaxHelper();
 				var api = new Api();
-				console.log(api.first_page_data().url);
-				console.log(api.first_page_data().params);
+				var webview_detail = null; //详情页webview
+				var titleNView = { //详情页原生导航配置
+					backgroundColor: '#f7f7f7', //导航栏背景色
+					titleText: '', //导航栏标题
+					titleColor: '#000000', //文字颜色
+					type: 'transparent', //透明渐变样式
+					autoBackButton: true, //自动绘制返回箭头
+					splitLine: { //底部分割线
+						color: '#cccccc'
+					}
+				}
 
 				var list = new Vue({
 					el: '#app',
 					data: {
-						focus: [],
+						focus: ["",""],
 						hotdiss: [],
 						shoubomv: [],
 						listData: [],
@@ -103,15 +107,45 @@
 						this.getListData()
 					},
 					methods: {
-						showArticleinfo: function(artId){
-							alert(artId);
+						showArticleinfo: function(items){
+//							plus.webview.open('html/cdList.html', 'new', {dissid: artId}, 'slide-in-right', 200);
+							//触发子窗口变更新闻详情
+							mui.fire(webview_detail, 'get_detail', {
+								dissid: items.dissid,
+								dissname: items.dissname,
+								imgurl: items.imgurl
+							});
+			
+							//更改详情页原生导航条信息
+							titleNView.titleText = items.dissname;
+							webview_detail.setStyle({
+								"titleNView": titleNView
+							});
+							setTimeout(function() {
+								webview_detail.show("slide-in-right", 300);
+							}, 150);
 						},
 						showSliderInfo: function(artId){
 							alert(artId);
 						},
 						getListData: function() {
+							
 						}
-					}
+					},
+					watch:{
+				        focus: function(val, oldVal){
+				        	if (val.length > 1) {
+				        		// 页面渲染完成在开启轮播
+				        		this.$nextTick(function(){
+				        			var slider = mui("#slider");
+									slider.slider({
+										interval: 5000
+									});
+				        		});
+				        	}
+				            console.log("focus: "+val, oldVal);
+				        }
+				   }
 				});
 				mui.init({
 					swipeBack: true, //启用右滑关闭功能
@@ -136,7 +170,7 @@
 				 	}
 				});
 				function getDateList(){
-					plus.nativeUI.showWaiting();
+//					plus.nativeUI.showWaiting();
 					//重置上拉加载
 					mui('#app').pullRefresh().refresh(true);
 					
@@ -145,12 +179,12 @@
 						console.log(data);
 						console.log(data.data);
 						list.listData = data;
-						list.focus = data.data.focus
-						list.hotdiss = data.data.hotdiss.list
-						list.shoubomv = data.data.shoubomv.all
+						list.focus = data.data.focus;
+						list.hotdiss = data.data.hotdiss.list;
+						list.shoubomv = data.data.shoubomv.all;
 					}
-					ajaxHelper.jsonp(api.first_page_data().url, api.first_page_data().params, callback);
-					plus.nativeUI.closeWaiting();
+					ajaxHelper.jsonp(api.first_page_data().url, api.first_page_data().params, "MusicJsonCallback", callback);
+//					plus.nativeUI.closeWaiting();
 					mui('#app').pullRefresh().endPulldownToRefresh()
 				}
 				function getMoreData(){
@@ -174,6 +208,18 @@
 				}
 
 				mui.plusReady(function() {
+					//预加载详情页
+					webview_detail = mui.preload({
+						url: 'html/cdList.html',
+						id: 'cd_detail',
+						styles: {
+							"render": "always",
+							"popGesture": "hide",
+							"bounce": "vertical",
+							"bounceBackground": "#efeff4",
+							"titleNView": titleNView
+						}
+					});
 					var self = plus.webview.currentWebview(),
 						leftPos = Math.ceil((window.innerWidth - 60) / 2); // 设置凸起大图标为水平居中
 
@@ -326,10 +372,6 @@
 							plus.webview.open('html/new-webview.html', 'new', {}, 'slide-in-right', 200);
 						}
 					});
-				});
-				var slider = mui("#slider");
-				slider.slider({
-					interval: 5000
 				});
 			})();
 		</script>

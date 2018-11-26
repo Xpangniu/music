@@ -27,13 +27,13 @@ AjaxHelper.prototype.delete = function(url, data, callback) {
 	this.ajax(url, 'DELETE', 'json', data, callback)
 }
 
-AjaxHelper.prototype.jsonp = function(url, data, callback) {
+AjaxHelper.prototype.jsonp = function(url, data, jsonpCallback, callback) {
 	$.ajax({
 		url: url,
 		type: 'GET',
 		dataType: 'jsonp',
 		jsonp: "callbackparam",
-		jsonpCallback:"MusicJsonCallback",
+		jsonpCallback: jsonpCallback,
 		data: data,
 		success: callback,
 		error: function(xhr, errorType, error) {

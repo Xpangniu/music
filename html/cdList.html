@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>new webview</title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/vue.min.js"></script>
+		<script src="../js/ajax-helper.js"></script>
+		<script src="../config/api.js"></script>
+		<script src="../js/jquery-1.10.2.min.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+	</head>
+	<body>
+		<div class="mui-content" id="cdlist">
+			<!--顶部banner图 开始-->
+			<div id="kr-article-banner" class="kr-article-banner">
+				<div id="kr-article-cover" class="kr-article-cover">
+					<img :src="imgurl">
+				</div>
+				<h2 id="kr-article-title" class="kr-article-title">{{dissname}}</h2>
+			</div>
+			<!--顶部banner图 结束-->
+			
+			<div class="kr-article-content">
+				<ul class="mui-table-view">
+				    <li class="mui-table-view-cell" v-for="item in cdList" @click="play(item)">{{item.name}}</li>
+				</ul>
+			</div>
+		</div>
+		
+		<script>
+			var ajaxHelper = new AjaxHelper();
+			var api = new Api();
+			function getDefaultData() {
+				return {
+					dissid: '',
+					cdList: [],
+					dissname: '',
+					imgurl: ''
+				}
+			}
+
+			var vm = new Vue({
+				el: '#cdlist',
+				data: getDefaultData(),
+				methods: {
+					resetData: function() {//重置数据
+						Object.assign(this.$data, getDefaultData());
+					},
+					play: function(item) {
+						alert(item.mid);
+					}
+				}
+			});
+			//监听自定义事件，获取新闻详情
+			document.addEventListener('get_detail', function(event) {
+				var dissid = event.detail.dissid;
+				if(!dissid) {
+					return;
+				}
+				
+				//前页传入的数据，直接渲染，无需等待ajax请求详情后
+				vm.dissid = event.detail.dissid;
+				vm.dissname = event.detail.dissname;
+				vm.imgurl = event.detail.imgurl;
+				//向服务端请求文章详情内容
+				
+				var callback = function(data) {
+					var resultData = JSON.parse(data.result);
+					console.log(resultData);
+					console.log(resultData.cdlist[0]);
+					vm.cdList = resultData.cdlist[0].songlist;
+				}
+				
+				ajaxHelper.post(api.cd(dissid).url, api.cd(dissid).params, callback);
+				mui('#cdlist').pullRefresh().endPulldownToRefresh();
+			});
+
+			//重写返回逻辑
+			mui.back = function() {
+				plus.webview.currentWebview().hide("auto", 300);
+			}
+			
+			//窗口隐藏时，重置页面数据
+			mui.plusReady(function () {
+				var self = plus.webview.currentWebview();
+				self.addEventListener("hide",function (e) {
+					window.scrollTo(0, 0);
+					vm.resetData();
+				},false);
+			})
+			mui.init({
+				swipeBack: true, //启用右滑关闭功能
+				pullRefresh : {
+				    container:"#cdlist",//下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+				    down : {
+				    	style:'circle', //必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+				    	color:'#2BD009', //可选，默认“#2BD009” 下拉刷新控件颜色
+						height:'50px',//可选,默认50px.下拉刷新控件的高度,
+				    	range:'100px', //可选 默认100px,控件可下拉拖拽的范围
+				      	offset:'50px', //可选 默认0px,下拉刷新控件的起始位置
+				      	auto: true,//可选,默认false.首次加载自动上拉刷新一次
+				      	callback : getDateList //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+				    },
+			     	up : {
+				       height:50,//可选.默认50.触发上拉加载拖动距离
+				       auto:true,//可选,默认false.自动上拉加载一次
+				       contentrefresh : "正在加载...",//可选，正在加载状态时，上拉加载控件上显示的标题内容
+				       contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+				       callback : getMoreData //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+				    }
+			 	}
+			});
+			function getDateList(){
+				//重置上拉加载
+				mui('#cdlist').pullRefresh().refresh(true);
+//				var dissid = "5621441894";
+				var dissid = vm.dissid;
+				
+				if (dissid) {
+					var callback = function(data) {
+						var resultData = JSON.parse(data.result);
+						console.log(resultData);
+						console.log(resultData.cdlist[0]);
+						vm.cdList = resultData.cdlist[0].songlist;
+					}
+					ajaxHelper.post(api.cd(dissid).url, api.cd(dissid).params, callback);
+				}
+				
+				
+				mui('#cdlist').pullRefresh().endPulldownToRefresh()
+			}
+			function getMoreData(){
+			 	var _self = this;
+			 	
+//				 	mui.getJSON(
+//					  	apiUrl+"article&m=articleList&page="+page+'&cate='+cate,
+//					  	function(res){
+//						   	console.log(JSON.stringify(res));
+//						   	//判断加载完毕
+//						   	if(res.status == "empty"){
+//						    	_self.endPullupToRefresh(true);
+//						   	}else{
+//						    newsListObj.news = newsListObj.news.concat(res.data);
+//						    page++;
+//						    _self.endPullupToRefresh(false);
+//						   	}
+//					   
+//					  	}
+//				 	);
+			}
+		</script>
+	</body>
+</html>
