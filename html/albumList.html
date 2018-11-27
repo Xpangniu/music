@@ -59,10 +59,10 @@
 						util.copy(this.$data, getDefaultData());
 					},
 					play: function(item) {
-						alert(item.mid);
+						alert(item.songmid);
 					},
 					showMenu: function(item) {
-						alert(item.name);
+						alert(item.songname);
 					}
 				}
 			});
@@ -72,19 +72,15 @@
 				if(!id) {
 					return;
 				}
-				alert(id);
 				//前页传入的数据，直接渲染，无需等待ajax请求详情后
 				vm.id = event.detail.id;
 				vm.title = event.detail.title;
 				vm.pic = event.detail.pic;
 				//向服务端请求文章详情内容
-				
-				var callback = function(data) {
-					console.log(data);
-					vm.cdList = data.data.list;
-				}
-				ajaxHelper.jsonp(api.album(id).url, api.album(id).params, "albumJsonCallback", callback);
-				mui('#albumlist').pullRefresh().endPulldownToRefresh();
+				mui.getJSON(api.album(id).url, api.album(id).params, function(rsp) {
+					console.log(rsp);
+					vm.cdList = rsp.data.list;
+				});
 			});
 
 			//重写返回逻辑

@@ -389,7 +389,8 @@
 					"html/tab-webview-subpage-contact.html",
 					"html/new-webview.html",
 					"html/cdList.html",
-					"html/mvDetail.html"
+					"html/mvDetail.html",
+					"html/albumList.html"
 				],
 				"priority": 0
 			},

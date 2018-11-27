@@ -19,7 +19,7 @@
 		<script>
 			var shoubomv = localStorage.getItem('shoubomv');
 			shoubomv = JSON.parse(shoubomv);
-			var vid = shoubomv.vid;
+			var url = shoubomv.url;
 			var mvtitle = shoubomv.mvtitle;
 			var titleNView = { //详情页原生导航配置
 				backgroundColor: '#f7f7f7', //导航栏背景色
@@ -35,8 +35,8 @@
 			mui.init({
 		      
 		      subpages:[{
-		        url: 'https://y.qq.com/portal/mv/v/' + vid + '.html',
-		        id: vid,
+		        url: url,
+		        id: "outPage",
 		        styles: {
 					"render": "always",
 					"popGesture": "hide",
@@ -48,16 +48,16 @@
 		    });
 
 			//重写返回逻辑
-			mui.back = function() {
-				plus.webview.currentWebview().hide("auto", 300);
-			}
+//			mui.back = function() {
+//				plus.webview.currentWebview().hide("auto", 300);
+//			}
 			
 			//窗口隐藏时，重置页面数据
 			mui.plusReady(function () {
 				var self = plus.webview.currentWebview();
 				self.addEventListener("hide",function (e) {
 					window.scrollTo(0, 0);
-					vm.resetData();
+//					vm.resetData();
 				},false);
 			})
 		</script>
