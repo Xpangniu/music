@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>new webview</title>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/vue.min.js"></script>
+		<script src="../js/ajax-helper.js"></script>
+		<script src="../config/api.js"></script>
+		<script src="../js/jquery-1.10.2.min.js"></script>
+		<script src="../js/util.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+	</head>
+	<body>
+		<div class="mui-content" id="albumlist">
+			<!--顶部banner图 开始-->
+			<div id="kr-article-banner" class="kr-article-banner">
+				<div id="kr-article-cover" class="kr-article-cover">
+					<img :src="pic">
+				</div>
+				<h2 id="kr-article-title" class="kr-article-title">{{title}}</h2>
+			</div>
+			<!--顶部banner图 结束-->
+			
+			<div class="kr-article-content">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell mui-media" v-for="item in cdList">
+						<a href="javascript:;">
+							<img class="mui-media-object mui-pull-right" src="../images/icon-...black.png" @click="showMenu(item)">
+							<div class="mui-media-body" @click="play(item)">
+								{{item.songname}}
+								<p class='mui-ellipsis'>{{item.singer[0].name}}</p>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		
+		<script>
+			var ajaxHelper = new AjaxHelper();
+			var api = new Api();
+			function getDefaultData() {
+				return {
+					id: '',
+					cdList: [],
+					title: '',
+					pic: ''
+				}
+			}
+
+			var vm = new Vue({
+				el: '#albumlist',
+				data: getDefaultData(),
+				methods: {
+					resetData: function() {//重置数据
+						util.copy(this.$data, getDefaultData());
+					},
+					play: function(item) {
+						alert(item.mid);
+					},
+					showMenu: function(item) {
+						alert(item.name);
+					}
+				}
+			});
+			//监听自定义事件，获取新闻详情
+			document.addEventListener('album_detail', function(event) {
+				var id = event.detail.id;
+				if(!id) {
+					return;
+				}
+				alert(id);
+				//前页传入的数据，直接渲染，无需等待ajax请求详情后
+				vm.id = event.detail.id;
+				vm.title = event.detail.title;
+				vm.pic = event.detail.pic;
+				//向服务端请求文章详情内容
+				
+				var callback = function(data) {
+					console.log(data);
+					vm.cdList = data.data.list;
+				}
+				ajaxHelper.jsonp(api.album(id).url, api.album(id).params, "albumJsonCallback", callback);
+				mui('#albumlist').pullRefresh().endPulldownToRefresh();
+			});
+
+			//重写返回逻辑
+			mui.back = function() {
+				plus.webview.currentWebview().hide("auto", 300);
+			}
+			
+			//窗口隐藏时，重置页面数据
+			mui.plusReady(function () {
+				var self = plus.webview.currentWebview();
+				self.addEventListener("hide",function (e) {
+					window.scrollTo(0, 0);
+					vm.resetData();
+				},false);
+			})
+			
+		</script>
+	</body>
+</html>

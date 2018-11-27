@@ -32,20 +32,20 @@
 				<div id="app">
 					<div id="slider" class="mui-slider" >
 						<div class="mui-slider-group mui-slider-loop">
-							<div class="mui-slider-item mui-slider-item-duplicate" @click="showArticleinfo(focus[focus.length-1].id)">
+							<div class="mui-slider-item mui-slider-item-duplicate" @click="showV8info(focus[focus.length-1])">
 								<a href="#">
 									<img v-bind:src="focus[focus.length-1].pic">
 								</a>
 							</div>
 							
-							<div class="mui-slider-item" v-for="items in focus" @click="showArticleinfo(items.id)">
+							<div class="mui-slider-item" v-for="items in focus" @click="showV8info(items)">
 								<a href="#">
 									<img v-bind:src="items.pic">
 								</a>
 							</div>
 							
 							<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
-							<div class="mui-slider-item mui-slider-item-duplicate" @click="showArticleinfo(focus[0].id)">
+							<div class="mui-slider-item mui-slider-item-duplicate" @click="showV8info(focus[0])">
 								<a href="#">
 									<img v-bind:src="focus[0].pic">
 								</a>
@@ -91,7 +91,7 @@
 				var ajaxHelper = new AjaxHelper();
 				var api = new Api();
 				var webview_detail = null; //详情页webview
-				var mv_detail =null;
+				var album_detail =null;
 				var titleNView = { //详情页原生导航配置
 					backgroundColor: '#f7f7f7', //导航栏背景色
 					titleText: '', //导航栏标题
@@ -117,7 +117,6 @@
 					},
 					methods: {
 						showArticleinfo: function(items){
-//							plus.webview.open('html/cdList.html', 'new', {dissid: artId}, 'slide-in-right', 200);
 							//触发子窗口变更新闻详情
 							mui.fire(webview_detail, 'get_detail', {
 								dissid: items.dissid,
@@ -134,24 +133,30 @@
 								webview_detail.show("slide-in-right", 300);
 							}, 150);
 						},
-						showSliderInfo: function(artId){
-							alert(artId);
+						showV8info: function(item){
+							alert(item.type);
+							if (item.type == '10002') {
+								//触发子窗口变更新闻详情
+								mui.fire(album_detail, 'album_detail', {
+									id: item.id,
+									title: item.title,
+									pic: item.pic
+								});
+				
+								//更改详情页原生导航条信息
+								titleNView.titleText = item.title;
+								album_detail.setStyle({
+									"titleNView": titleNView
+								});
+								setTimeout(function() {
+									album_detail.show("slide-in-right", 300);
+								}, 150);
+							}
+							
 						},
 						showMVinfo: function(items) {
-							//触发子窗口变更新闻详情
-							mui.fire(mv_detail, 'get_MVdetail', {
-								vid: items.vid,
-								mvtitle: items.mvtitle
-							});
-			
-							//更改详情页原生导航条信息
-							titleNView.titleText = items.mvtitle;
-							mv_detail.setStyle({
-								"titleNView": titleNView
-							});
-							setTimeout(function() {
-								mv_detail.show("slide-in-right", 300);
-							}, 150);
+							localStorage.setItem('shoubomv',JSON.stringify(items));
+							plus.webview.open('html/mvDetail.html', 'new', {}, 'slide-in-right', 200);
 						},
 						getListData: function() {
 							
@@ -168,7 +173,6 @@
 									});
 				        		});
 				        	}
-				            console.log("focus: "+val, oldVal);
 				        }
 				   }
 				});
@@ -245,9 +249,9 @@
 							"titleNView": titleNView
 						}
 					});
-					mv_detail = mui.preload({
-						url: 'html/mvDetail.html',
-						id: 'mv_detail',
+					album_detail = mui.preload({
+						url: 'html/albumList.html',
+						id: 'album_detail',
 						styles: {
 							"render": "always",
 							"popGesture": "hide",
@@ -256,6 +260,7 @@
 							"titleNView": titleNView
 						}
 					});
+					
 					var self = plus.webview.currentWebview(),
 						leftPos = Math.ceil((window.innerWidth - 60) / 2); // 设置凸起大图标为水平居中
 

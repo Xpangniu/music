@@ -17,48 +17,35 @@
 		</div>
 		
 		<script>
-			function getDefaultData() {
-				return {
-					vid: '',
-					mvtitle: '',
-					content: ''
+			var shoubomv = localStorage.getItem('shoubomv');
+			shoubomv = JSON.parse(shoubomv);
+			var vid = shoubomv.vid;
+			var mvtitle = shoubomv.mvtitle;
+			var titleNView = { //详情页原生导航配置
+				backgroundColor: '#f7f7f7', //导航栏背景色
+				titleText: mvtitle, //导航栏标题
+				titleColor: '#000000', //文字颜色
+				type: 'transparent', //透明渐变样式
+				autoBackButton: true, //自动绘制返回箭头
+				splitLine: { //底部分割线
+					color: '#cccccc'
 				}
 			}
-
-			var vm = new Vue({
-				el: '#cdlist',
-				data: getDefaultData(),
-				methods: {
-					resetData: function() {//重置数据
-						Object.assign(this.$data, getDefaultData());
-					}
+			
+			mui.init({
+		      
+		      subpages:[{
+		        url: 'https://y.qq.com/portal/mv/v/' + vid + '.html',
+		        id: vid,
+		        styles: {
+					"render": "always",
+					"popGesture": "hide",
+					"bounce": "vertical",
+					"bounceBackground": "#efeff4",
+					"titleNView": titleNView
 				}
-			});
-			//监听自定义事件，获取新闻详情
-			document.addEventListener('get_MVdetail', function(event) {
-				var dissid = event.detail.vid;
-				if(!dissid) {
-					return;
-				}
-				
-				//前页传入的数据，直接渲染，无需等待ajax请求详情后
-				vm.vid = event.detail.vid;
-				vm.mvtitle = event.detail.mvtitle;
-				
-				//向服务端请求文章详情内容
-				mui.ajax('https://y.qq.com/portal/mv/v/' + dissid + '.html', {
-					type:'GET',
-					dataType: 'json', //服务器返回json格式数据
-					timeout: 15000, //15秒超时
-					success: function(rsp) {
-						vm.content = rsp.content;
-					},
-					error: function(xhr, type, errorThrown) {
-						mui.toast('获取文章内容失败');
-						//TODO 此处可以向服务端告警
-					}
-				});
-			});
+		      }]
+		    });
 
 			//重写返回逻辑
 			mui.back = function() {
