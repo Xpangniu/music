@@ -61,6 +61,10 @@
 					},
 					play: function(item) {
 						alert(item.mid);
+						var wvB = plus.webview.currentWebview();
+						var wvA = wvB.opener();
+						alert(wvA.id);
+						wvA.evalJS("changePaly('" +item.mid+ "')");
 					},
 					showMenu: function(item) {
 						alert(item.name);

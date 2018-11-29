@@ -46,6 +46,24 @@
 						<div id="scroll1" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
 								<div id="app">
+									<!-- 播放器 -->
+									<div>
+										播放器
+										<audio
+											id="music"
+											controls="controls"
+								        	ref="audio"
+								        	:src="songUrl"
+								        	:preload="audio.preload"
+								        	class="dn"
+								        	@play="onPlay"
+								        	@error="onError"
+								        	@waiting="onWaiting"
+								        	@pause="onPause"
+								        	@timeupdate="onTimeupdate"
+								        	@loadedmetadata="onLoadedmetadata"
+							            />
+									</div>
 									<div id="slider" class="mui-slider" >
 										<div class="mui-slider-group mui-slider-loop">
 											<div class="mui-slider-item mui-slider-item-duplicate" @click="showV8info(focus[focus.length-1])">
@@ -98,21 +116,7 @@
 									    </ul>
 									</div>
 									
-									<!-- 播放器 -->
-									<div>
-										<audio
-							              ref="audio"
-							              :src="songUrl"
-							              :preload="audio.preload"
-							              class="dn"
-							              @play="onPlay"
-							              @error="onError"
-							              @waiting="onWaiting"
-							              @pause="onPause"
-							              @timeupdate="onTimeupdate"
-							              @loadedmetadata="onLoadedmetadata"
-							            />
-									</div>
+									
 								</div>
 							
 							</div>
@@ -146,6 +150,7 @@
 
 		<script src="js/util.js"></script>
 		<script type="text/javascript">
+			var list;
 			(function($) {
 				var ajaxHelper = new AjaxHelper();
 				var api = new Api();
@@ -162,7 +167,7 @@
 					}
 				}
 
-				var list = new Vue({
+				list = new Vue({
 					el: '#app',
 					data: {
 						focus: ["",""],
@@ -180,9 +185,6 @@
 					        waiting: true,
 					        preload: 'auto'
 					    }
-					},
-					ready: function() {
-						this.getListData()
 					},
 					methods: {
 						showArticleinfo: function(items){
@@ -232,28 +234,46 @@
 							localStorage.setItem('shoubomv',JSON.stringify(items));
 							plus.webview.open('html/mvDetail.html', 'new', {}, 'slide-in-right', 200);
 						},
-						getListData: function() {
+						changeSong: function(songmid) {
+							var vkey;
+							var url = "https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?" +
+				            "g_tk=5381&loginUin=0&hostUin=0&" +
+				            "format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0&" +
+				            "cid=205361747&uin=0&songmid="+songmid+"&filename=C400"+songmid+".m4a&guid=4402796566";
+							console.log(url);
+							var me = this;
+							mui.getJSON(url, {}, function(rsp) {
+								vkey = rsp.data.items[0].vkey;
+						        var dataUrl = 'http://isure.stream.qqmusic.qq.com/C400'
+						        + songmid
+						        + '.m4a?fromtag=66&guid=4402796566&uin=0&vkey='
+						        + vkey;
+								me.songUrl = dataUrl;
+								console.log("url："+ dataUrl);
+								var m = document.getElementById('music');
+								m.play();
+							});
 							
 						},
 						// 当音频暂停
 					    onPause: function() {
-					      this.audio.playing = false;
+					      	this.audio.playing = false;
 					    },
 					    onError: function() {
-					      this.audio.waiting = true;
-					      console.log('文件错误');
+					      	this.audio.waiting = true;
+					      	console.log('文件错误');
 					    },
 					    // 当音频开始等待
 					    onWaiting: function(res) {
-					      console.log(res)
+					      	console.log(res)
 					    },
 					    // 当音频开始播放
 					    onPlay: function(res) {
-					      this.audio.playing = true
-					      this.audio.loading = false
-					      
-					      const target = res.target
-					      const audios = document.getElementsByTagName('audio');
+							this.audio.playing = true
+							this.audio.loading = false
+						    console.log("开始播放")
+//							const target = res.target
+//					      	const audios = document.getElementsByTagName('audio');
 					      
 					    },
 					    // 当timeupdate事件大概每秒一次，用来更新音频流的当前播放时间
@@ -273,8 +293,8 @@
 					    // 当加载语音流元数据完成后，会触发该事件的回调函数
 					    // 语音元数据主要是语音的长度之类的数据
 					    onLoadedmetadata: function(res) {
-					      this.audio.waiting = false
-					      this.audio.maxTime = parseInt(res.target.duration)
+					      	this.audio.waiting = false
+					      	this.audio.maxTime = parseInt(res.target.duration)
 					    }
 					},
 					watch:{
@@ -319,9 +339,6 @@
 					mui('#app').pullRefresh().refresh(true);
 					
 					var callback = function(data) {
-//						plus.storage.setItem("firstPageData", data)
-						console.log(data);
-						console.log(data.data);
 						list.listData = data;
 						list.focus = data.data.focus;
 						list.hotdiss = data.data.hotdiss.list;
@@ -350,6 +367,8 @@
 //					  	}
 //				 	);
 				}
+				
+				
 
 				mui.plusReady(function() {
 					//预加载详情页
@@ -457,6 +476,8 @@
 					var active_color = '#fff';
 					drawNativeIcon.addEventListener('click', function(e) {
 						mui.alert('你点击了图标，你在此可以打开摄像头或者新窗口等自定义点击事件。', '悬浮球点击事件');
+						var m = document.getElementById('music');
+						m.play();
 						// 重绘字体颜色
 						if(active_color == '#fff') {
 							drawNativeIcon.drawText('\ue600', {}, {
@@ -546,6 +567,10 @@
 				
 				
 			})();
+			function changePaly(id){
+				alert("调用父页面播放")
+				list.changeSong(id);
+			}
 		</script>
 	</body>
 
