@@ -250,8 +250,7 @@
 						        + vkey;
 								me.songUrl = dataUrl;
 								console.log("url："+ dataUrl);
-								var m = document.getElementById('music');
-								m.play();
+								me.audio.playing = true;
 							});
 							
 						},
@@ -307,6 +306,16 @@
 										interval: 5000
 									});
 				        		});
+				        	}
+				        },
+				        songUrl: function(val, oldVal) {
+				        	console.log("url 改变啦："+this.audio.playing)
+				        	if(this.audio.playing) {
+				        		this.$nextTick(function(){
+					        		var m = document.getElementById('music');
+									m.load();
+									m.play();
+								});
 				        	}
 				        }
 				  	}
@@ -476,8 +485,7 @@
 					var active_color = '#fff';
 					drawNativeIcon.addEventListener('click', function(e) {
 						mui.alert('你点击了图标，你在此可以打开摄像头或者新窗口等自定义点击事件。', '悬浮球点击事件');
-						var m = document.getElementById('music');
-						m.play();
+						list.songUrl = 'http://isure.stream.qqmusic.qq.com/C400002BW2Ph0pEqdk.m4a?fromtag=66&guid=4402796566&uin=0&vkey=85B27FF485691468E1A1908A5E45D44D4D52A7ACC9EAFC55FB08AA97422C279FB09CFB27BEFA1BA9A0CD355EA1761EC4CF2E9ED83BBA0D00';
 						// 重绘字体颜色
 						if(active_color == '#fff') {
 							drawNativeIcon.drawText('\ue600', {}, {
@@ -568,7 +576,6 @@
 				
 			})();
 			function changePaly(id){
-				alert("调用父页面播放")
 				list.changeSong(id);
 			}
 		</script>
