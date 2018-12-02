@@ -390,7 +390,8 @@
 					"html/new-webview.html",
 					"html/cdList.html",
 					"html/mvDetail.html",
-					"html/albumList.html"
+					"html/albumList.html",
+					"html/topList.html"
 				],
 				"priority": 0
 			},

@@ -26,7 +26,7 @@ function Api(){
 	},
   rank_list: function(){
   	return {
-  		rl: 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg',
+  		url: 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg',
 	    params: {
 	        format: 'jsonp',
 	        g_tk: 5381,
@@ -35,8 +35,7 @@ function Api(){
 	        outCharset: 'utf-8',
 	        notice: 0,
 	        platform: 'h5',
-	        needNewCode: 1,
-	        _: new Date().getTime()
+	        needNewCode: 1
 	    },
 	    jsonp: 'jsonpCallback'
 	}

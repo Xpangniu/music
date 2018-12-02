@@ -32,7 +32,7 @@ AjaxHelper.prototype.jsonp = function(url, data, jsonpCallback, callback) {
 		url: url,
 		type: 'GET',
 		dataType: 'jsonp',
-		jsonp: "callbackparam",
+		jsonp: "jsonpCallback",
 		jsonpCallback: jsonpCallback,
 		data: data,
 		success: callback,

@@ -17,145 +17,231 @@
 				background-color: #efeff4;
 			}
 			
-			.title {
-				margin: 20px 15px 10px;
-				color: #6d6d72;
+			.mui-bar~.mui-content .mui-fullscreen {
+				top: 44px;
+				height: auto;
+			}
+			.mui-pull-top-tips {
+				position: absolute;
+				top: -20px;
+				left: 50%;
+				margin-left: -25px;
+				width: 40px;
+				height: 40px;
+				border-radius: 100%;
+				z-index: 1;
+			}
+			.mui-bar~.mui-pull-top-tips {
+				top: 24px;
+			}
+			.mui-pull-top-wrapper {
+				width: 42px;
+				height: 42px;
+				display: block;
+				text-align: center;
+				background-color: #efeff4;
+				border: 1px solid #ddd;
+				border-radius: 25px;
+				background-clip: padding-box;
+				box-shadow: 0 4px 10px #bbb;
+				overflow: hidden;
+			}
+			.mui-pull-top-tips.mui-transitioning {
+				-webkit-transition-duration: 200ms;
+				transition-duration: 200ms;
+			}
+			.mui-pull-top-tips .mui-pull-loading {
+				/*-webkit-backface-visibility: hidden;
+				-webkit-transition-duration: 400ms;
+				transition-duration: 400ms;*/
+				
+				margin: 0;
+			}
+			.mui-pull-top-wrapper .mui-icon,
+			.mui-pull-top-wrapper .mui-spinner {
+				margin-top: 7px;
+			}
+			.mui-pull-top-wrapper .mui-icon.mui-reverse {
+				/*-webkit-transform: rotate(180deg) translateZ(0);*/
+			}
+			.mui-pull-bottom-tips {
+				text-align: center;
+				background-color: #efeff4;
 				font-size: 15px;
-				padding-bottom: 51px;
+				line-height: 40px;
+				color: #777;
+			}
+			.mui-pull-top-canvas {
+				overflow: hidden;
+				background-color: #fafafa;
+				border-radius: 40px;
+				box-shadow: 0 4px 10px #bbb;
+				width: 40px;
+				height: 40px;
+				margin: 0 auto;
+			}
+			.mui-pull-top-canvas canvas {
+				width: 40px;
+			}
+			.mui-slider-indicator.mui-segmented-control {
+				background-color: #efeff4;
+			}
+			.mui-table-view .mui-media-object {
+			    line-height: 82px;
+			    max-width: 82px;
+			    height: 82px;
 			}
 		</style>
 	</head>
 
 	<body>
 		<div class="mui-content">
-			<div id="first_slider" class="mui-slider">
-				<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
-					<a class="mui-control-item" href="#item1mobile">
-					推荐
-					</a>
-						<a class="mui-control-item" href="#item2mobile">
-					排行榜
-					</a>
-						<a class="mui-control-item" href="#item3mobile">
-					搜索
-					</a>
+			<div id="slider1" class="mui-slider mui-fullscreen">
+				<div id="sliderSegmentedControl" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+					<div class="mui-scroll" style="width: 100%;">
+						<a class="mui-control-item mui-active" style="width: 33%;" href="#item1mobile">
+							推荐
+						</a>
+						<a class="mui-control-item" style="width: 33%;" href="#item2mobile">
+							排行榜
+						</a>
+						<a class="mui-control-item" style="width: 33%;" href="#item3mobile">
+							搜索
+						</a>
+					</div>
 				</div>
 				<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-4"></div>
-				<div class="mui-slider-group">
+				<div id="app" class="mui-slider-group">
 					<div id="item1mobile" class="mui-slider-item mui-control-content mui-active">
 						<div id="scroll1" class="mui-scroll-wrapper">
 							<div class="mui-scroll">
-								<div id="app">
-									<!-- 播放器 -->
-									<div>
-										播放器
-										<audio
-											id="music"
-											controls="controls"
-								        	ref="audio"
-								        	:src="songUrl"
-								        	:preload="audio.preload"
-								        	class="dn"
-								        	@play="onPlay"
-								        	@error="onError"
-								        	@waiting="onWaiting"
-								        	@pause="onPause"
-								        	@timeupdate="onTimeupdate"
-								        	@loadedmetadata="onLoadedmetadata"
-							            />
-									</div>
-									<div id="slider" class="mui-slider" >
-										<div class="mui-slider-group mui-slider-loop">
-											<div class="mui-slider-item mui-slider-item-duplicate" @click="showV8info(focus[focus.length-1])">
-												<a href="#">
-													<img v-bind:src="focus[focus.length-1].pic">
-												</a>
-											</div>
-											
-											<div class="mui-slider-item" v-for="items in focus" @click="showV8info(items)">
-												<a href="#">
-													<img v-bind:src="items.pic">
-												</a>
-											</div>
-											
-											<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
-											<div class="mui-slider-item mui-slider-item-duplicate" @click="showV8info(focus[0])">
-												<a href="#">
-													<img v-bind:src="focus[0].pic">
-												</a>
-											</div>
-										</div>
-										<div class="mui-slider-indicator">
-											<div class="mui-indicator mui-active"></div>
-											<div class="mui-indicator" v-for="items in focus.length-1"></div>
-										</div>
-									</div>
-									<div class="wrapper">
-										<div class="mui-card" v-for="items in hotdiss" @click="showArticleinfo(items)">
-											<div class="mui-card-header mui-card-media" :style="'height:40vw;background-image:url('+items.imgurl+')'"></div>
-											<div class="mui-card-content">
-												<div class="mui-card-content-inner">
-													<p>{{items.author}}</p>
-													<p style="color: #333;">{{items.dissname}}</p>
-												</div>
-											</div>
-										</div>
-										<!--<ul class="mui-table-view mui-grid-view">
-									        <li class="mui-table-view-cell mui-media mui-col-xs-6" v-for="items in hotdiss" @click="showArticleinfo(items.dissid)">
-									            <a href="#">
-									                <img class="mui-media-object" v-bind:src="items.imgurl">
-									                <div class="mui-media-body">{{items.dissname}}</div></a></li>
-									    </ul>-->
-									</div>
-									<div class="wrapper">
-										<ul class="mui-table-view mui-grid-view">
-									        <li class="mui-table-view-cell mui-media mui-col-xs-6" v-for="items in shoubomv" @click="showMVinfo(items)">
-									            <a href="#">
-									                <img class="mui-media-object" v-bind:src="items.picurl">
-									                <div class="mui-media-body">{{items.mvtitle}} {{items.singer_name}} {{items.pub_date}}</div></a></li>
-									    </ul>
-									</div>
-									
-									
+								
+								<!-- 播放器 -->
+								<div>
+									播放器
+									<audio
+										id="music"
+										controls="controls"
+							        	ref="audio"
+							        	:src="songUrl"
+							        	:preload="audio.preload"
+							        	class="dn"
+							        	@play="onPlay"
+							        	@error="onError"
+							        	@waiting="onWaiting"
+							        	@pause="onPause"
+							        	@timeupdate="onTimeupdate"
+							        	@loadedmetadata="onLoadedmetadata"
+						            />
 								</div>
-							
+								
+								<div id="slider" class="mui-slider" >
+									<div class="mui-slider-group mui-slider-loop">
+										<div class="mui-slider-item mui-slider-item-duplicate">
+											<a href="#" style="display: inline;" @tap="showV8info(focus[focus.length-1])">
+												<img v-bind:src="focus[focus.length-1].pic">
+											</a>
+										</div>
+										
+										<div class="mui-slider-item" v-for="items in focus">
+											<a href="#" style="display: inline;" @tap="showV8info(items)">
+												<img v-bind:src="items.pic">
+											</a>
+										</div>
+										
+										<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+										<div class="mui-slider-item mui-slider-item-duplicate">
+											<a href="#" style="display: inline;" @tap="showV8info(focus[0])">
+												<img v-bind:src="focus[0].pic">
+											</a>
+										</div>
+									</div>
+									<div class="mui-slider-indicator">
+										<div class="mui-indicator mui-active"></div>
+										<div class="mui-indicator" v-for="items in focus.length-1"></div>
+									</div>
+								</div>
+								<div class="wrapper">
+									<div class="mui-card" v-for="items in hotdiss" @tap="showArticleinfo(items)">
+										<div class="mui-card-header mui-card-media" :style="'height:40vw;background-image:url('+items.imgurl+')'"></div>
+										<div class="mui-card-content">
+											<div class="mui-card-content-inner">
+												<p>{{items.author}}</p>
+												<p style="color: #333;">{{items.dissname}}</p>
+											</div>
+										</div>
+									</div>
+									<!--<ul class="mui-table-view mui-grid-view">
+								        <li class="mui-table-view-cell mui-media mui-col-xs-6" v-for="items in hotdiss">
+								            <a href="#" @click="showArticleinfo(items.dissid)">
+								                <img class="mui-media-object" v-bind:src="items.imgurl">
+								                <div class="mui-media-body">{{items.dissname}}</div></a></li>
+								    </ul>-->
+								</div>
+								<div class="wrapper">
+									<ul class="mui-table-view mui-grid-view">
+								        <li class="mui-table-view-cell mui-media mui-col-xs-6" v-for="items in shoubomv">
+								            <a href="#" @tap="showMVinfo(items)">
+								                <img class="mui-media-object" v-bind:src="items.picurl">
+								                <div class="mui-media-body">{{items.mvtitle}} {{items.singer_name}} {{items.pub_date}}</div></a></li>
+								    </ul>
+								</div>
+								
 							</div>
 						</div>
 					</div>
 					<div id="item2mobile" class="mui-slider-item mui-control-content">
-						<div id="scroll2" class="mui-scroll-wrapper">
-							<div class="mui-scroll">
-								<ul class="mui-table-view">
-									<li class="mui-table-view-cell">
-										第二个选项卡子项-1
+						<div class="mui-scroll-wrapper">
+							<div class="mui-scroll" style="margin-bottom: 35px;">
+								<ul class="mui-table-view mui-table-view-chevron">
+									<li class="mui-table-view-cell mui-media" v-for="items in topList">
+										<a class="mui-navigate-right" @tap="showTopinfo(items)">
+											<img class="mui-media-object mui-pull-left" v-bind:src="items.picUrl">
+											<div class="mui-media-body">
+												{{items.topTitle}}
+												<div v-for="(song,index) in items.songList">
+													{{(index+1)+ ' ' + song.songname}}<p style="display: inline;" class='mui-ellipsis'>-{{song.singername}}</p>
+												</div>
+											</div>
+										</a>
 									</li>
 								</ul>
+								
 							</div>
 						</div>
 					</div>
 					<div id="item3mobile" class="mui-slider-item mui-control-content">
-						<div id="scroll3" class="mui-scroll-wrapper">
+						<div class="mui-scroll-wrapper">
 							<div class="mui-scroll">
-								<ul class="mui-table-view">
-									<li class="mui-table-view-cell">
-										第三个选项卡子项-1
-									</li>
-								</ul>
+								<div class="mui-input-row mui-search">
+									<input type="search" class="mui-input-clear" placeholder="搜索歌曲、歌单、专辑">
+								</div>
 							</div>
 						</div>
 					</div>
+					
+					
 				</div>
 			</div>
 		</div>
-
+		<script src="js/mui.pullToRefresh.js"></script>
+		<script src="js/mui.pullToRefresh.material.js"></script>
 		<script src="js/util.js"></script>
 		<script type="text/javascript">
+			mui.init();
 			var list;
+			function play(){
+				list.$refs.audio.play();
+			}
+			function pause(){
+				list.$refs.audio.pause();
+			}
 			(function($) {
 				var ajaxHelper = new AjaxHelper();
 				var api = new Api();
 				var webview_detail = null; //详情页webview
 				var album_detail =null;
+				var top_detail =null;
 				var titleNView = { //详情页原生导航配置
 					backgroundColor: '#f7f7f7', //导航栏背景色
 					titleText: '', //导航栏标题
@@ -174,6 +260,7 @@
 						hotdiss: [],
 						shoubomv: [],
 						listData: [],
+						topList: [],
 						firstPageData: '',
 						songUrl: '',
 						audio: {
@@ -233,6 +320,23 @@
 							items.url = 'https://y.qq.com/portal/mv/v/' + items.vid + '.html'
 							localStorage.setItem('shoubomv',JSON.stringify(items));
 							plus.webview.open('html/mvDetail.html', 'new', {}, 'slide-in-right', 200);
+						},
+						showTopinfo: function(item) {
+							//触发子窗口变更新闻详情
+							mui.fire(top_detail, 'top_detail', {
+								id: item.id,
+								topTitle: item.topTitle,
+								picUrl: item.picUrl
+							});
+			
+							//更改详情页原生导航条信息
+							titleNView.titleText = item.topTitle;
+							top_detail.setStyle({
+								"titleNView": titleNView
+							});
+							setTimeout(function() {
+								top_detail.show("slide-in-right", 300);
+							}, 150);
 						},
 						changeSong: function(songmid) {
 							var vkey;
@@ -320,64 +424,83 @@
 				        }
 				  	}
 				});
-				mui.init({
-					swipeBack: false, //关闭右滑关闭功能
-					pullRefresh : {
-					    container:"#app",//下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
-					    down : {
-					    	style:'circle', //必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
-					    	color:'#2BD009', //可选，默认“#2BD009” 下拉刷新控件颜色
-							height:'50px',//可选,默认50px.下拉刷新控件的高度,
-					    	range:'100px', //可选 默认100px,控件可下拉拖拽的范围
-					      	offset:'50px', //可选 默认0px,下拉刷新控件的起始位置
-					      	auto: true,//可选,默认false.首次加载自动上拉刷新一次
-					      	callback : getDateList //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
-					    },
-				     	up : {
-					       height:50,//可选.默认50.触发上拉加载拖动距离
-					       auto:true,//可选,默认false.自动上拉加载一次
-					       contentrefresh : "正在加载...",//可选，正在加载状态时，上拉加载控件上显示的标题内容
-					       contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
-					       callback : getMoreData //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
-					    }
-				 	}
+				
+				
+				//阻尼系数
+				var deceleration = mui.os.ios?0.003:0.0009;
+				$('.mui-scroll-wrapper').scroll({
+					bounce: false,
+					indicators: true, //是否显示滚动条
+					deceleration:deceleration
 				});
-				function getDateList(){
-//					plus.nativeUI.showWaiting();
+				$.ready(function() {
+					getDateList(true);
+					getTopList(true);
+					//循环初始化所有下拉刷新，上拉加载。
+					$.each(document.querySelectorAll('.mui-slider-group .mui-scroll'), function(index, pullRefreshEl) {
+						if (index == 0) {
+							$(pullRefreshEl).pullToRefresh({
+								down: {
+									auto:true,
+									callback: getDateList
+								},
+								/*up: {
+									callback: function() {
+										var self = this;
+										setTimeout(function() {
+											var ul = self.element.querySelector('.mui-table-view');
+											ul.appendChild(createFragment(ul, index, 5));
+											self.endPullUpToRefresh();
+										}, 1000);
+									}
+								}*/
+							});
+						} else if (index == 1) {
+							$(pullRefreshEl).pullToRefresh({
+								down: {
+									auto:true,
+									callback: getTopList
+								}
+							});
+						}
+						
+					});
+				});
+				
+				function getDateList(init){
+					var self = this;
 					//重置上拉加载
-					mui('#app').pullRefresh().refresh(true);
-					
 					var callback = function(data) {
 						list.listData = data;
 						list.focus = data.data.focus;
 						list.hotdiss = data.data.hotdiss.list;
 						list.shoubomv = data.data.shoubomv.all;
+						if (!init) {
+							self.endPullDownToRefresh();
+						}
 					}
 					ajaxHelper.jsonp(api.first_page_data().url, api.first_page_data().params, "MusicJsonCallback", callback);
-//					plus.nativeUI.closeWaiting();
-					mui('#app').pullRefresh().endPulldownToRefresh()
+
 				}
+				function getTopList(init){
+					var self = this;
+					//向服务端请求文章详情内容
+					var callback = function(data) {
+						list.topList = data.data.topList;
+						console.log(data);
+						if (!init) {
+							alert("shuaxing");
+							self.endPullDownToRefresh();
+						}
+					}
+					ajaxHelper.jsonp(api.rank_list().url, api.rank_list().params, "topListJsonCallback", callback);
+				}
+				
 				function getMoreData(){
 				 	var _self = this;
+				 	self.endPullUpToRefresh();
 				 	
-//				 	mui.getJSON(
-//					  	apiUrl+"article&m=articleList&page="+page+'&cate='+cate,
-//					  	function(res){
-//						   	console.log(JSON.stringify(res));
-//						   	//判断加载完毕
-//						   	if(res.status == "empty"){
-//						    	_self.endPullupToRefresh(true);
-//						   	}else{
-//						    newsListObj.news = newsListObj.news.concat(res.data);
-//						    page++;
-//						    _self.endPullupToRefresh(false);
-//						   	}
-//					   
-//					  	}
-//				 	);
 				}
-				
-				
 
 				mui.plusReady(function() {
 					//预加载详情页
@@ -395,6 +518,17 @@
 					album_detail = mui.preload({
 						url: 'html/albumList.html',
 						id: 'album_detail',
+						styles: {
+							"render": "always",
+							"popGesture": "hide",
+							"bounce": "vertical",
+							"bounceBackground": "#efeff4",
+							"titleNView": titleNView
+						}
+					});
+					top_detail = mui.preload({
+						url: 'html/topList.html',
+						id: 'top_detail',
 						styles: {
 							"render": "always",
 							"popGesture": "hide",
@@ -421,7 +555,9 @@
 						left: leftPos + 'px',
 						width: '60px',
 						height: '60px'
-					}, [{
+					}, [
+				 
+					{
 						tag: 'rect',
 						id: 'bg',
 						position: {
@@ -448,20 +584,35 @@
 						rectStyles: {
 							color: '#fff'
 						}
-					}, {
-						tag: 'rect',
+					},
+					{
+						tag: 'img',
 						id: 'iconBg',
+						src: 'images/cbd.jpg',
 						position: {
+							top: '1px',
+							left: '0px',
+							width: '45px',
+							height: '45px'
+						},
+						sprite: {top:'0px',left:'0px',width:'100%',height:'100%', radius: '45px',}
+					
+					}
+						
+						
+						
+						/*position: {
 							top: '5px',
 							left: '5px',
 							width: '50px',
 							height: '50px'
 						},
 						rectStyles: {
-							color: '#d74b28',
+//							color: '#d74b28',
+//							background:url('//y.gtimg.cn/music/photo_new/T002R300x300M000003gnhKW34J0Bl.jpg?max_age=2592000'),
 							radius: '50%'
-						}
-					}, {
+						}*/
+					/*}, {
 						tag: 'font',
 						id: 'icon',
 						text: '\ue600', //此为字体图标Unicode码'\e600'转换为'\ue600'
@@ -477,7 +628,7 @@
 							color: '#fff',
 							size: '30px'
 						}
-					}]);
+					}*/]);
 					// append 到父webview中
 					self.append(drawNativeIcon);
 
@@ -485,7 +636,11 @@
 					var active_color = '#fff';
 					drawNativeIcon.addEventListener('click', function(e) {
 						mui.alert('你点击了图标，你在此可以打开摄像头或者新窗口等自定义点击事件。', '悬浮球点击事件');
-						list.songUrl = 'http://isure.stream.qqmusic.qq.com/C400002BW2Ph0pEqdk.m4a?fromtag=66&guid=4402796566&uin=0&vkey=85B27FF485691468E1A1908A5E45D44D4D52A7ACC9EAFC55FB08AA97422C279FB09CFB27BEFA1BA9A0CD355EA1761EC4CF2E9ED83BBA0D00';
+						if (list.audio.playing) {
+							pause();
+						} else {
+							play();
+						}
 						// 重绘字体颜色
 						if(active_color == '#fff') {
 							drawNativeIcon.drawText('\ue600', {}, {
@@ -559,11 +714,6 @@
 					});
 				});
 				
-				
-				$('.mui-scroll-wrapper').scroll({
-					indicators: true //是否显示滚动条
-				});
-				
 				var sliderSegmentedControl = document.getElementById('sliderSegmentedControl');
 				$('.mui-input-group').on('change', 'input', function() {
 					if (this.checked) {
@@ -573,8 +723,7 @@
 					}
 				});
 				
-				
-			})();
+			})(mui);
 			function changePaly(id){
 				list.changeSong(id);
 			}
